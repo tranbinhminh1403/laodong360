@@ -1,0 +1,38 @@
+{
+  "name": "laodong360",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.1",
+    "@types/nodemailer": "^6.4.17",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@types/axios": "^0.14.4",
+    "@types/cors": "^2.8.17",
+    "@types/jsonwebtoken": "^9.0.9",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "laodong360": "file:",
+    "mysql2": "^3.12.0",
+    "nodemailer": "^6.10.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20"
+  },
+  "scripts": {
+    "test:jwt": "ts-node src/tests/test-create-jwt.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:create": "yarn typeorm migration:create ./src/migrations/$npm_config_name",
+    "migration:generate": "yarn typeorm migration:generate ./src/migrations/InitDatabase -d src/config/data-source.ts",
+    "migration:run": "yarn typeorm migration:run -d src/config/data-source.ts",
+    "migration:revert": "yarn typeorm migration:revert -d src/config/data-source.ts",
+    "migration:show": "yarn typeorm migration:show -d src/config/data-source.ts"
+  }
+}
