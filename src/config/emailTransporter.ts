@@ -11,14 +11,13 @@ const password = process.env.MAIL_PASSWORD;
 console.log(username + '\n' + password);
 
 export const transporter = nodemailer.createTransport({
-    host: 'smtp.mailgun.org',
+    host: 'smtp.eu.mailgun.org',
     port: 465,
-    secure: true,
-    pool: true,
-    maxConnections: 5,
-    maxMessages: Infinity,
+  //   secure: true,
     auth: {
-        user: username,
-        pass: password
-    }
-}); 
+      user: process.env.MAIL_USERNAME,
+      pass: process.env.MAIL_PASSWORD
+    },
+    debug: true,
+    logger: true
+  });

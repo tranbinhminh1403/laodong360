@@ -3,6 +3,7 @@ import { handleCreateOrder, handleGetOrders } from '../controllers/OrderControll
 import { handleWebhookCallback } from '../controllers/WebhookController';
 import { handleLogin, handleLogout } from '../controllers/AuthController';
 import { authenticateToken } from '../middleware/authMiddleware';
+import { testEmailLogging } from '../controllers/TestEmailController';
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router.post('/webhook', handleWebhookCallback);
 router.get('/', authenticateToken as any, handleGetOrders);
 router.post('/auth/logout', handleLogout);
 
-
+// Add this with your other routes
+router.post('/test-email-logging', testEmailLogging);
 
 export default router; 
