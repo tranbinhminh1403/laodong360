@@ -260,7 +260,7 @@ export const sendPaymentSuccessEmailToAccountant = async (orderData: Partial<Ord
     `;
 
     const info = await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+      from: process.env.NO_REPLY_MAIL,
       to: process.env.ACCOUNTANT_EMAIL,
       subject: `Đơn hàng #${orderData.mrc_order_id} đã thanh toán thành công`,
       html
