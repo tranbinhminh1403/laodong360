@@ -5,7 +5,7 @@ export class Orders {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
+    @Column({ nullable: true })
     email: string;
 
     // @Column()
@@ -17,7 +17,7 @@ export class Orders {
     // @Column()
     // gender: string;
 
-    @Column()
+    @Column({ nullable: true })
     location: string;
 
     @Column()

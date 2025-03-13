@@ -134,7 +134,7 @@ const processWebhook = async (payload: WebhookPayload): Promise<boolean> => {
     console.log('\n4. Updating order status and sending notifications...');
     await Promise.all([
       OrderRepository.updateOrderStatus(existingOrder.id, 'Completed'),
-      sendPaymentSuccessEmail(existingOrder),
+      existingOrder.email ? sendPaymentSuccessEmail(existingOrder) : Promise.resolve(true),
       sendPaymentSuccessEmailToAccountant(existingOrder)
     ]);
     console.log('✅ Order updated and notifications sent');

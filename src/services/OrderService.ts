@@ -2,6 +2,7 @@ import axios from 'axios';
 import { IOrderRequest, IOrderResponse } from '../types/Types';
 import { generateJWTToken } from '../utils/jwt';
 import * as OrderRepository from '../repositories/OrderRepository';
+import { Orders } from '../entities/Orders';
 
 interface OrderConfig {
   API_KEY: string;
@@ -45,13 +46,15 @@ export const createOrder = async (
     if (response.data.data.order_id) {
       const order = {
         ...orderData,
+        email: orderData.email || null,
+        location: orderData.location || null,
         mrc_order_id,
         order_id: response.data.data.order_id,
         status: "Pending"
       };
 
       // 3. Lưu order vào database
-      await OrderRepository.createOrder(order);
+      await OrderRepository.createOrder(order as Partial<Orders>);
 
       return {
         success: true,
