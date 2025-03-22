@@ -969,11 +969,13 @@ jws@^3.2.2:
   dependencies:
     "@types/axios" "^0.14.4"
     "@types/cors" "^2.8.17"
+    "@types/jsonwebtoken" "^9.0.9"
     axios "^1.7.9"
     cors "^2.8.5"
     dotenv "^16.4.7"
     express "^4.21.2"
-    laodong360 "file:C:/Users/Admin/AppData/Local/Yarn/Cache/v6/npm-laodong360-1.0.0-8d0f8070-60bf-411a-842c-c08138094415-1740363971871/node_modules/laodong360"
+    jsonwebtoken "^9.0.2"
+    laodong360 "file:C:/Users/Admin/AppData/Local/Yarn/Cache/v6/npm-laodong360-1.0.0-93514590-bebe-4f83-8d22-2fe0bcafef5d-1742607841338/node_modules/laodong360"
     mysql2 "^3.12.0"
     nodemailer "^6.10.0"
     reflect-metadata "^0.2.2"
@@ -1659,6 +1661,11 @@ utils-merge@1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/utils-merge/-/utils-merge-1.0.1.tgz"
   integrity sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==
+
+uuid@^11.1.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-11.1.0.tgz#9549028be1753bb934fc96e2bca09bb4105ae912"
+  integrity sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==
 
 uuid@^9.0.0:
   version "9.0.1"

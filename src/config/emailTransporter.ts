@@ -8,7 +8,7 @@ dotenv.config();
 const username = process.env.MAIL_USERNAME;
 const password = process.env.MAIL_PASSWORD;
 
-console.log(username + '\n' + password);
+// console.log(username + '\n' + password);
 
 export const transporter = nodemailer.createTransport({
     host: 'smtp.eu.mailgun.org',

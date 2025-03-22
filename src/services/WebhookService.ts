@@ -3,6 +3,7 @@ import * as OrderRepository from '../repositories/OrderRepository';
 import { verifyWebhook } from '../utils/webhookVerify';
 import { sendPaymentSuccessEmail, sendPaymentSuccessEmailToAccountant, sendPaymentSuccessEmailToAdmin } from './EmailService';
 import { contactCenterLogin, createContactCenterCustomer, createContactCenterTicket, getCustomerByPhone } from './ContactCenterService';
+import { createInvoice } from './InvoiceService';
 export const handleWebhook = async (
   webhookData: string,
   secretKey: string
@@ -135,7 +136,8 @@ const processWebhook = async (payload: WebhookPayload): Promise<boolean> => {
     await Promise.all([
       OrderRepository.updateOrderStatus(existingOrder.id, 'Completed'),
       existingOrder.email ? sendPaymentSuccessEmail(existingOrder) : Promise.resolve(true),
-      sendPaymentSuccessEmailToAccountant(existingOrder)
+      sendPaymentSuccessEmailToAccountant(existingOrder),
+      createInvoice(existingOrder)
     ]);
     console.log('✅ Order updated and notifications sent');
 

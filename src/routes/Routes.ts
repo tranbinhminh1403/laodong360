@@ -4,6 +4,7 @@ import { handleWebhookCallback } from '../controllers/WebhookController';
 import { handleLogin, handleLogout } from '../controllers/AuthController';
 import { authenticateToken } from '../middleware/authMiddleware';
 import { testEmailLogging } from '../controllers/TestEmailController';
+import { testCreateInvoice } from '../controllers/InvoiceController';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.post('/auth/logout', handleLogout);
 
 // Add this with your other routes
 router.post('/test-email-logging', testEmailLogging);
+router.post('/test-invoice', testCreateInvoice);
 
 export default router; 
