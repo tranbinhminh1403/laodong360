@@ -46,7 +46,7 @@ export const invoiceLogin = async () => {
     console.log('\n=== Starting Invoice Login Process ===');
     console.log('Login URL:', `${INVOICE_API_URL}/auth/login`);
     console.log('Username:', INVOICE_USERNAME);
-    console.log('Password:', '********'); // Don't log actual password
+    console.log('Password:', INVOICE_PASSWORD); // Don't log actual password
 
     const response = await axios.post(`${INVOICE_API_URL}/auth/login`, {
       username: INVOICE_USERNAME,
@@ -198,7 +198,7 @@ const createInvoiceAndGetHash = async (orderData: Partial<Orders>, accessToken: 
       ],
       itemInfo: [
         {
-          itemName: orderData.note || orderData.title,
+          itemName: orderData.title,
           unitName: "Cái",
           unitPrice: price,
           quantity: 1,
