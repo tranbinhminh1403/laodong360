@@ -21,6 +21,6 @@ router.post('/auth/logout', handleLogout);
 // Add this with your other routes
 router.post('/test-email-logging', testEmailLogging);
 router.post('/test-invoice', testCreateInvoice);
-router.post('/test-cpass', testCpassService);
+// router.post('/test-cpass', testCpassService);
 
 export default router; 
