@@ -198,7 +198,7 @@ const createInvoiceAndGetHash = async (orderData: Partial<Orders>, accessToken: 
       ],
       itemInfo: [
         {
-          itemName: orderData.title,
+          itemName: 'Dịch vụ tổng đài hỗ trợ người lao động',
           unitName: "Cái",
           unitPrice: price,
           quantity: 1,

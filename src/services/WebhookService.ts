@@ -4,6 +4,8 @@ import { verifyWebhook } from '../utils/webhookVerify';
 import { sendPaymentSuccessEmail, sendPaymentSuccessEmailToAccountant, sendPaymentSuccessEmailToAdmin } from './EmailService';
 import { contactCenterLogin, createContactCenterCustomer, createContactCenterTicket, getCustomerByPhone } from './ContactCenterService';
 import { createInvoice } from './InvoiceService';
+import { sendZNS } from './CpassService';
+
 export const handleWebhook = async (
   webhookData: string,
   secretKey: string
@@ -137,7 +139,8 @@ const processWebhook = async (payload: WebhookPayload): Promise<boolean> => {
       OrderRepository.updateOrderStatus(existingOrder.id, 'Completed'),
       existingOrder.email ? sendPaymentSuccessEmail(existingOrder) : Promise.resolve(true),
       sendPaymentSuccessEmailToAccountant(existingOrder),
-      createInvoice(existingOrder)
+      createInvoice(existingOrder),
+      sendZNS(existingOrder)
     ]);
     console.log('✅ Order updated and notifications sent');
 
