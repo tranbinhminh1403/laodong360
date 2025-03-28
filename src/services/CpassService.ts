@@ -25,7 +25,7 @@ export const sendZNS = async (order: Partial<Orders>): Promise<any> => {
                 ma_khach_hang: order.phoneNumber,
                 goi_dich_vu: order.title,
                 van_de_can_tu_van: order.note,
-                thoi_gian_tu_van: order.time ? new Date(order.time).toLocaleString('vi-VN') : ''
+                thoi_gian_tu_van: order.time ? new Date(order.time).toISOString().replace('T', ' ').substring(0, 19) : ''
             },
 
         }
