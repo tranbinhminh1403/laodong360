@@ -110,38 +110,46 @@ export const signInvoice = async (hashString: string, accessToken: string): Prom
 
 export const createInvoice = async (orderData: Partial<Orders>): Promise<InvoiceResponse> => {
   try {
+    console.log('\n=== Starting Invoice Process ===');
+    console.log('Order ID:', orderData.mrc_order_id);
+    console.log('Customer:', orderData.fullName);
+    console.log('Amount:', orderData.price);
+
     // 1. Login
-    console.log('\n1. Getting access token...');
+    console.log('\n1. Getting invoice access token...');
     let loginResponse = await invoiceLogin();
     if (!loginResponse.access_token) {
+      console.error('❌ Failed to get invoice access token');
       throw new Error('Failed to get invoice access token');
     }
-    console.log('✅ Access token received');
+    console.log('✅ Invoice access token received');
 
     // 2. Create invoice and get hash
+    console.log('\n2. Creating invoice...');
     let createResponse = await createInvoiceAndGetHash(orderData, loginResponse.access_token);
     
-    // If token expired, try once more with new token
-    // if (!createResponse.success && createResponse.error === 'Token expired') {
-    //   console.log('Token expired, getting new token...');
-    //   loginResponse = await invoiceLogin();
-    //   createResponse = await createInvoiceAndGetHash(orderData, loginResponse.access_token);
-    // }
-
     if (!createResponse.success || !createResponse.data?.result?.hashString) {
+      console.error('❌ Failed to create invoice:', createResponse.error);
       throw new Error('Failed to get hash string from invoice creation');
     }
+    console.log('✅ Invoice created successfully');
+    console.log('Hash received:', createResponse.data.result.hashString.substring(0, 20) + '...');
 
-    // 3. Sign invoice with hash
+    // 3. Sign invoice
+    console.log('\n3. Signing invoice...');
     const signResponse = await signInvoice(
       createResponse.data.result.hashString,
       loginResponse.access_token
     );
 
+    console.log(signResponse.success ? '✅ Invoice signed successfully' : '❌ Invoice signing failed');
+    console.log('=== Invoice Process Completed ===\n');
+
     return signResponse;
 
   } catch (error: any) {
     console.error('\n❌ Invoice Process Failed:', error.message);
+    console.error('Error details:', error.response?.data);
     return {
       success: false,
       error: error.message,

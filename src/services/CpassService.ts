@@ -16,6 +16,10 @@ const ZNS_SURVEY_TEMPLATE_ID = process.env.ZNS_SURVEY_TEMPLATE_ID;
 //     phoneNumber: string;
 export const sendZNS = async (order: Partial<Orders>): Promise<any> => {
     try {
+        console.log('\n=== Starting ZNS Process ===');
+        console.log('Order ID:', order.mrc_order_id);
+        console.log('Sending to:', order.phoneNumber);
+        
         const body = {
             oa_id: ZNS_OA_ID,
             phone: order.phoneNumber,
@@ -28,6 +32,10 @@ export const sendZNS = async (order: Partial<Orders>): Promise<any> => {
                 thoi_gian_tu_van: order.time ? new Date(order.time).toISOString().replace('T', ' ').substring(0, 19) : ''
             },
         }
+
+        console.log('Template data:', body.template_data);
+        
+        console.log('\nSending ZNS message...');
         const response = await axios.post(`${ZNS_BASEURL}/vendor/v1/zalo/send-zns`, body, {
             headers: {
                 'Content-Type': 'application/json',
@@ -35,8 +43,16 @@ export const sendZNS = async (order: Partial<Orders>): Promise<any> => {
                 'API-KEY': ZNS_API_KEY
             }
         });
+
+        console.log('✅ ZNS sent successfully');
+        console.log('Response:', response.data);
+        console.log('=== ZNS Process Completed ===\n');
+        
         return response;
     } catch (error: any) {
+        console.error('\n❌ ZNS Process Failed');
+        console.error('Error message:', error.message);
+        console.error('Error details:', error.response?.data);
         return {
             success: false, 
             error: error.message,
