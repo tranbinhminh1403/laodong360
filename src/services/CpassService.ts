@@ -15,7 +15,6 @@ const ZNS_SURVEY_TEMPLATE_ID = process.env.ZNS_SURVEY_TEMPLATE_ID;
 //     phoneNumber: string;
 export const sendZNS = async (order: Partial<Orders>): Promise<any> => {
     try {
-
         const body = {
             oa_id: ZNS_OA_ID,
             phone: order.phoneNumber,
@@ -27,7 +26,6 @@ export const sendZNS = async (order: Partial<Orders>): Promise<any> => {
                 van_de_can_tu_van: order.note,
                 thoi_gian_tu_van: order.time ? new Date(order.time).toISOString().replace('T', ' ').substring(0, 19) : ''
             },
-
         }
         const response = await axios.post(`${ZNS_BASEURL}/vendor/v1/zalo/send-zns`, body, {
             headers: {
@@ -38,8 +36,7 @@ export const sendZNS = async (order: Partial<Orders>): Promise<any> => {
         });
         return response;
     } catch (error) {
-        console.error('Error sending ZNS:', error);
-        throw error;
+        return error; // Silent error handling
     }
 }
 

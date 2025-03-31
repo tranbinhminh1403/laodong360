@@ -94,10 +94,8 @@ export const sendPaymentSuccessEmail = async (orderData: Partial<Orders>): Promi
       html
     });
     
-    console.log(`[${new Date().toISOString()}] Payment success email sent: ${info.messageId}`);
     return true;
   } catch (error: any) {
-    console.error(`[${new Date().toISOString()}] Payment success email failed:`, error.message);
     return false;
   }
 };
@@ -152,10 +150,8 @@ export const sendNewOrderNotification = async (orderData: Partial<Orders>): Prom
       html
     });
     
-    console.log(`[${new Date().toISOString()}] New order notification email sent: ${info.messageId}`);
     return true;
   } catch (error: any) {
-    console.error(`[${new Date().toISOString()}] New order notification email failed:`, error.message);
     return false;
   }
 };
@@ -209,13 +205,11 @@ export const sendPaymentSuccessEmailToAdmin = async (orderData: Partial<Orders>)
       html
     });
     
-    console.log(`[${new Date().toISOString()}] Payment success email sent to admin: ${info.messageId}`);
     return true;
   } catch (error: any) {
-    console.error(`[${new Date().toISOString()}] Payment success email to admin failed:`, error.message);
     return false;
   }
-}; 
+};
 
 export const sendPaymentSuccessEmailToAccountant = async (orderData: Partial<Orders>): Promise<boolean> => {
   try {
@@ -266,10 +260,8 @@ export const sendPaymentSuccessEmailToAccountant = async (orderData: Partial<Ord
       html
     });
     
-    console.log(`[${new Date().toISOString()}] Payment success email sent to accountant: ${info.messageId}`);
     return true;
   } catch (error: any) {
-    console.error(`[${new Date().toISOString()}] Payment success email to accountant failed:`, error.message);
     return false;
   }
 }; 
