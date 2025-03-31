@@ -11,6 +11,7 @@ const ZNS_TEMPLATE_ID = process.env.ZNS_TEMPLATE_ID;
 const ZNS_API_KEY = process.env.ZNS_API_KEY;
 const ZNS_SURVEY_TEMPLATE_ID = process.env.ZNS_SURVEY_TEMPLATE_ID;
 
+
 // interface UpdateOrderResponse { 
 //     phoneNumber: string;
 export const sendZNS = async (order: Partial<Orders>): Promise<any> => {
@@ -35,8 +36,13 @@ export const sendZNS = async (order: Partial<Orders>): Promise<any> => {
             }
         });
         return response;
-    } catch (error) {
-        return error; // Silent error handling
+    } catch (error: any) {
+        return {
+            success: false, 
+            error: error.message,
+            message: "Failed to send ZNS",
+            details: error.response?.data
+        }
     }
 }
 
