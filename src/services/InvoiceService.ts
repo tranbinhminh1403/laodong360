@@ -122,11 +122,11 @@ export const createInvoice = async (orderData: Partial<Orders>): Promise<Invoice
     let createResponse = await createInvoiceAndGetHash(orderData, loginResponse.access_token);
     
     // If token expired, try once more with new token
-    if (!createResponse.success && createResponse.error === 'Token expired') {
-      console.log('Token expired, getting new token...');
-      loginResponse = await invoiceLogin();
-      createResponse = await createInvoiceAndGetHash(orderData, loginResponse.access_token);
-    }
+    // if (!createResponse.success && createResponse.error === 'Token expired') {
+    //   console.log('Token expired, getting new token...');
+    //   loginResponse = await invoiceLogin();
+    //   createResponse = await createInvoiceAndGetHash(orderData, loginResponse.access_token);
+    // }
 
     if (!createResponse.success || !createResponse.data?.result?.hashString) {
       throw new Error('Failed to get hash string from invoice creation');
@@ -262,10 +262,10 @@ const createInvoiceAndGetHash = async (orderData: Partial<Orders>, accessToken: 
       console.error('Response Data:', error.response.data);
       
       // If token expired (usually 401 or specific error message)
-      if (error.response.status === 401 || 
-          (error.response.data?.message && error.response.data.message.includes('token'))) {
-        throw new Error('Token expired');
-      }
+      // if (error.response.status === 401 || 
+      //     (error.response.data?.message && error.response.data.message.includes('token'))) {
+      //   throw new Error('Token expired');
+      // }
     }
     return {
       success: false,
