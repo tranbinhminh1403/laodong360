@@ -39,21 +39,24 @@ export const getOrderByMrcOrderId = async (mrc_order_id: string): Promise<Orders
 
 
 
-export const updateOrderStatus = async (id: string, status: string): Promise<Orders> => {
-    try {
-        const order = await orderRepository.findOne({
-            where: { id }
-        });
-        
-        if (!order) {
-            throw new Error('Không tìm thấy đơn hàng');
-        }
+export const updateOrderStatus = async (
+  id: number, 
+  status: string,
+  updatedAt: Date = new Date()
+): Promise<Orders | null> => {
+  try {
+    const order = await orderRepository.findOne({ where: { order_id: id } });
+    if (!order) return null;
 
-        order.status = status;
-        return await orderRepository.save(order);
-    } catch (error: any) {
-        throw new Error(`Lỗi khi cập nhật trạng thái đơn hàng: ${error.message}`);
-    }
+    order.status = status;
+    order.updatedAt = updatedAt;
+    await orderRepository.save(order);
+
+    return order;
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    return null;
+  }
 };
 
 export const getAllOrdersWithFilter = async (status?: string | string[]) => {

@@ -37,8 +37,8 @@ export const handleWebhook = async (
       return { err_code: "1", message: "Order not found" };
     }
 
-    // Update order status first
-    await OrderRepository.updateOrderStatus(existingOrder.id, 'Completed');
+    // Update order status first with timestamp
+    await OrderRepository.updateOrderStatus(existingOrder.order_id, 'Completed', new Date());
 
     // Process other operations asynchronously
     processOrderNotifications(existingOrder).catch(console.error);
