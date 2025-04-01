@@ -13,7 +13,7 @@ export const testCpassService = async (req: Request, res: Response) => {
       });
     }
 
-    const result = await sendSurveyZNS(orderData);
+    const result = await sendZNS(orderData);
     
     res.status(200).json({
       success: true,
