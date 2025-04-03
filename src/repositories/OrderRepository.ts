@@ -49,7 +49,7 @@ export const updateOrderStatus = async (
     if (!order) return null;
 
     order.status = status;
-    // order.updatedAt = updatedAt;
+    order.updatedAt = updatedAt;
     await orderRepository.save(order);
 
     return order;
