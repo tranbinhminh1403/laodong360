@@ -3,6 +3,7 @@ import { IOrderRequest, IOrderResponse } from '../types/Types';
 import { generateJWTToken } from '../utils/jwt';
 import * as OrderRepository from '../repositories/OrderRepository';
 import { Orders } from '../entities/Orders';
+import { contactCenterLogin, createContactCenterCustomer, createContactCenterTicket, getCustomerByPhone } from './ContactCenterService';
 
 interface OrderConfig {
   API_KEY: string;
@@ -20,53 +21,117 @@ export const createOrder = async (
 ): Promise<IOrderResponse> => {
   try {
     // 1. Chuẩn bị dữ liệu trước
-    const jwtToken = generateJWTToken(config.API_KEY, config.SECRET_KEY);
     const mrc_order_id = `ORDER_${Math.floor(Date.now() / 1000)}`;
-    
-    // 2. Call API tạo order
-    const response = await axios.post(process.env.API_CREATE_ORDER_URL || '', {
-      merchant_id: parseInt(config.MERCHANT_ID),
+    const order = {
+      ...orderData,
+      email: orderData.email || null,
+      location: orderData.location || null,
+      order_id: Math.floor(Math.random() * 1000000),
       mrc_order_id,
-      total_amount: parseInt(orderData.price.toString()),
-      description: `Thanh toán đơn hàng ${mrc_order_id}`,
-      webhooks: config.URL_WEBHOOK,
-      url_success: config.URL_SUCCESS,
-      url_cancel: config.URL_CANCEL,
-      url_detail: config.URL_DETAIL,
-      lang: orderData.lang || 'vi'
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'jwt': `Bearer ${jwtToken}`
-      }
-    });
+      status: "Pending"
+    };
 
-    console.log(response.data);
-
-    if (response.data.data.order_id) {
-      const order = {
-        ...orderData,
-        email: orderData.email || null,
-        location: orderData.location || null,
+    // 2. Kiểm tra giá trị price
+    if (orderData.price > 0) {
+      // Chuẩn bị JWT token và gọi API
+      const jwtToken = generateJWTToken(config.API_KEY, config.SECRET_KEY);
+      
+      // Call API tạo order
+      const response = await axios.post(process.env.API_CREATE_ORDER_URL || '', {
+        merchant_id: parseInt(config.MERCHANT_ID),
         mrc_order_id,
-        order_id: response.data.data.order_id,
-        status: "Pending"
-      };
+        total_amount: parseInt(orderData.price.toString()),
+        description: `Thanh toán đơn hàng ${mrc_order_id}`,
+        webhooks: config.URL_WEBHOOK,
+        url_success: config.URL_SUCCESS,
+        url_cancel: config.URL_CANCEL,
+        url_detail: config.URL_DETAIL,
+        lang: orderData.lang || 'vi'
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'jwt': `Bearer ${jwtToken}`
+        }
+      });
 
-      // 3. Lưu order vào database
+      if (response.data.data.order_id) {
+        order.order_id = response.data.data.order_id;
+        
+        // Lưu order vào database
+        await OrderRepository.createOrder(order as Partial<Orders>);
+
+        return {
+          success: true,
+          data: {
+            order_id: response.data.data.order_id,
+            redirect_url: response.data.data.redirect_url,
+            payment_url: response.data.data.payment_url,
+          }
+        };
+      }
+
+      throw new Error('Không thể tạo order');
+    } else {
+      // Nếu price <= 0, chỉ lưu vào database
       await OrderRepository.createOrder(order as Partial<Orders>);
-
+        try {
+          // 1. Contact Center Integration
+          let customerId: number | null = null;
+          
+          if (process.env.CONTACT_CENTER_API_URL) {
+            try {
+              // 1.1 Login to Contact Center
+              const loginResponse = await contactCenterLogin();
+              if (loginResponse.access_token) {
+                // 1.2 Try to find or create Customer
+                try {
+                    customerId = await getCustomerByPhone(order.phoneNumber || '');
+                  
+                  if (!customerId) {
+                    await createContactCenterCustomer({
+                      lastname: order.fullName || '',
+                      email: order.email || '',
+                      phonenumber: order.phoneNumber || '',
+                      country: 243,
+                      default_currency: 3,
+                      default_language: 'vietnamese'
+                    });
+                    
+                    customerId = await getCustomerByPhone(order.phoneNumber || '');
+                  }
+                } catch (customerError) {
+                  // Silent error for customer operations
+                }
+      
+                // 1.3 Create Ticket
+                await createContactCenterTicket({
+                  name: order.fullName || '',
+                  email: order.email || '',
+                  contactid: customerId || undefined,
+                  department: 1,
+                  subject: `[Gói hỗ trợ: ${order.title}]\nVấn đề: ${order.note}\nNgày hẹn: ${order.time}`,
+                  priority: 2,
+                });
+                console.log('Ticket created successfully');
+              }
+            } catch (error) {
+              // Silent error for contact center operations
+            }
+          }
+      
+        } catch (error) {
+          console.error('Error processing notifications:', error);
+        }
+      
       return {
         success: true,
         data: {
-          order_id: response.data.data.order_id,
-          redirect_url: response.data.data.redirect_url,
-          payment_url: response.data.data.payment_url,
+          order_id: order.order_id,
+          redirect_url: '',
+          payment_url: '',
         }
       };
     }
-
-    throw new Error('Không thể tạo order');
   } catch (error: any) {
     return {
       success: false,
