@@ -4,6 +4,8 @@ import { generateJWTToken } from '../utils/jwt';
 import * as OrderRepository from '../repositories/OrderRepository';
 import { Orders } from '../entities/Orders';
 import { contactCenterLogin, createContactCenterCustomer, createContactCenterTicket, getCustomerByPhone } from './ContactCenterService';
+import { sendFreeOrderEmail } from './EmailService';
+import { sendZNS } from './CpassService';
 
 interface OrderConfig {
   API_KEY: string;
@@ -59,7 +61,6 @@ export const createOrder = async (
         
         // Lưu order vào database
         await OrderRepository.createOrder(order as Partial<Orders>);
-
         return {
           success: true,
           data: {
@@ -74,6 +75,7 @@ export const createOrder = async (
     } else {
       // Nếu price <= 0, chỉ lưu vào database
       await OrderRepository.createOrder(order as Partial<Orders>);
+      
         try {
           // 1. Contact Center Integration
           let customerId: number | null = null;
@@ -122,6 +124,9 @@ export const createOrder = async (
         } catch (error) {
           console.error('Error processing notifications:', error);
         }
+
+        await sendFreeOrderEmail(order as Partial<Orders>);
+        await sendZNS(order as Partial<Orders>);
       
       return {
         success: true,
