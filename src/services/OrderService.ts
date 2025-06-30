@@ -74,6 +74,7 @@ export const createOrder = async (
       throw new Error('Không thể tạo order');
     } else {
       // Nếu price <= 0, chỉ lưu vào database
+      order.status = "Completed";
       await OrderRepository.createOrder(order as Partial<Orders>);
       
         try {
